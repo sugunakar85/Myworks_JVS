@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz App</title>
+
+<link rel="stylesheet" href="quiz-style.css">
+
+<script src="lib/xlsx.full.min.js"></script>
+<script src="quiz.js" defer></script>
+<script src="timer.js" defer></script>
+
+<style>
+.hidden { display: none; }
+
+h1 {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-weight: 500;
+    margin: 0.5rem 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Banner -->
+<div class="banner-container">
+    <img src="images/banner.png" alt="Quiz Banner" class="banner-image">
+</div>
+
+<!-- ================= LOGIN SECTION ================= -->
+<div id="login-container">
+    <h1>Login to Start the MCQ exam</h1>
+
+    <label for="username">Username:</label>
+    <input type="text" id="username" placeholder="Enter Username" required>
+
+    <button id="loginButton" class="btn login-btn">Login</button>
+
+    <p id="error-message" style="color:red; display:none;">
+        Please enter a username
+    </p>
+</div>
+
+<!-- ================= QUIZ SECTION ================= -->
+<div id="quiz-container" class="quiz-page hidden">
+
+    <div style="display:flex; align-items:center; gap:20px;">
+        <div id="timer" style="font-size:1rem; color:orange;">00:00:00</div>
+        <h1>This is a progressive MCQ test Select any one option there is no 'back' button</h1>
+    </div>
+
+    <p id="user-info"></p>
+
+    <!-- ===== FILE UPLOAD SECTION ===== -->
+    <div class="file-section">
+
+        <label for="fileUpload" class="btn upload-btn">
+            Upload Quiz File
+        </label>
+
+        <input type="file"
+               id="fileUpload"
+               accept=".xlsx"
+               onchange="loadExcelFile(event)"
+               class="file-upload-input" />
+
+        <!-- ===== TEMPLATE PREVIEW ===== -->
+        <div class="template-preview-container">
+            <h3>Template Preview</h3>
+            <div class="template-preview-frame">
+                <img src="images/excel_template_preview.png"
+                     alt="Template Preview"
+                     class="template-preview-image">
+            </div>
+        </div>
+
+        <a id="downloadTemplateBtn"
+           class="btn template-btn"
+           href="https://github.com/sugunakar85/Quixls/releases/download/v1.1/Progressive_MCQ_Template.xlsx"
+           download>
+            Download Template
+        </a>
+
+    </div>
+
+    <!-- ===== QUESTION AREA ===== -->
+    <div id="mcq-question-container" class="question-container" style="display:none;">
+        <h3 id="question-title" class="question-title"></h3>
+        <div id="question-options" class="options-container"></div>
+    </div>
+
+    <!-- ===== NAV BUTTONS ===== -->
+    <div class="button-group">
+        <!-- ✅ Disabled by default (IMPORTANT CHANGE) -->
+        <button id="nextButton" class="btn" style="display:none;" disabled onclick="nextQuestion()">Next</button>
+
+        <!-- ✅ Disabled by default -->
+        <button id="submitButton" class="btn" style="display:none;" disabled onclick="submitQuiz()">Submit</button>
+    </div>
+
+    <!-- ===== RESULTS ===== -->
+    <div id="results-container" class="results-container" style="display:none;">
+        <h3>Your Results</h3>
+        <div id="results"></div>
+        <button id="saveButton" class="btn" onclick="saveResults()">Save Results</button>
+    </div>
+
+</div>
+
+<footer>
+<p style="font-size:0.8em; color:#777;">
+© 2026 <strong>JVS Edtek</strong>. All rights reserved.
+</p>
+</footer>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+const loginContainer = document.getElementById("login-container");
+const quizContainer = document.getElementById("quiz-container");
+const loginButton = document.getElementById("loginButton");
+const usernameInput = document.getElementById("username");
+const errorMessage = document.getElementById("error-message");
+const userInfo = document.getElementById("user-info");
+
+/* ---------- LOGIN BUTTON ---------- */
+loginButton.addEventListener("click", () => {
+    const username = usernameInput.value.trim();
+
+    if (username === "") {
+        errorMessage.style.display = "block";
+        return;
+    }
+
+    startQuiz(username);
+});
+
+/* ---------- START QUIZ ---------- */
+function startQuiz(username) {
+    loginContainer.classList.add("hidden");
+    quizContainer.classList.remove("hidden");
+    userInfo.innerText = "Logged in as: " + username;
+}
+
+/* ---------- OPTIONAL LOGOUT ---------- */
+function logout() {
+    location.reload();
+}
+</script>
+
+</body>
+</html>
